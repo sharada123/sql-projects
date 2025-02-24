@@ -1,0 +1,39 @@
+In the command prompt after installation, set the username and user-email. This is done only once after installation.
+
+git config --global user.name "ekwinder"
+
+git config --global user.email "ekwinder@itvedant.com"
+
+------------------------------
+For every new project you will initiatize a new repository, but do this once for that project
+
+git init
+
+-----------------------------
+Everytime you are going to make any change in your project, first add the files in the staging area
+
+To add all the files/folders in work directory
+init add .
+
+To add specific file
+init add sample.txt demo.txt
+
+-------------------------
+After adding the files in the staging, you can review them and then decide whether you want to commit them in the repo or not
+
+Next you will commit the files in the repo. While committing we will also specify a message to indicate what the commit is about
+
+git commit -m 'some message'
+
+----------------------------
+
+To sync the local and remote repository, first we will register remote repo and change the branch to main. Do this step once.
+
+git remote add origin https://github.com/ekwinderbhurji/sales-sql-project.git
+
+git branch -M main
+
+-----------------------------
+Now to actually sync both the repos. Run this for final update in the remote repo
+
+git push -u origin main​
