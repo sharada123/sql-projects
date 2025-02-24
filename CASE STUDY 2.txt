@@ -1,0 +1,51 @@
+Case Study
+
+Objective:
+Generate an output table using UiPath to identify employees from different departments who have the
+same highest salary.
+The goal is to list employees alongside their departments and salaries in the output table 
+
++-------+--------+---------------+
+| name  | salary | department_id |
++-------+--------+---------------+
+| Joe   |  70000 |             1 |
+| Jim   |  90000 |             1 |  => Employee Table
+| Henry |  80000 |             2 |
+| Sam   |  60000 |             2 |
+| Max   |  90000 |             1 |
++-------+--------+---------------+
++------+-------+
+| id   | name  |
++------+-------+
+|    1 | IT    |	=> Department Table
+|    2 | Sales |
++------+-------+
+ select d.name as Department,e.name as Employee,e.salary as salary from employee e inner join department d on (e.department_id=d.id);
++------------+----------+--------+
+| Department | Employee | salary |
++------------+----------+--------+
+| IT         | Joe      |  70000 |
+| IT         | Jim      |  90000 |
+| Sales      | Henry    |  80000 |	=> joined employee and department table using inner join
+| Sales      | Sam      |  60000 |
+| IT         | Max      |  90000 |
++------------+----------+--------+
+select d.name as Department,e.name as Employee,e.salary as salary from employee e inner join 
+department d on (e.department_id=d.id) where e.salary IN (select max(salary) from employee group by department_id);
++------------+----------+--------+
+| Department | Employee | salary |
++------------+----------+--------+
+| IT         | Jim      |  90000 |	=> I've display department name and employee name and employee salary with highest salary within each department 
+| Sales      | Henry    |  80000 |
+| IT         | Max      |  90000 |
++------------+----------+--------+
+
+
+select d.name as Department,e.name as Employee,e.salary as salary from employee e inner join department d on (e.department_id=d.id) where e.salary IN (select max(salary) from employee group by department_id) order by e.salary desc;
++------------+----------+--------+
+| Department | Employee | salary |
++------------+----------+--------+
+| IT         | Jim      |  90000 |	=> using order by I've display records in descending order on salary column.
+| IT         | Max      |  90000 |
+| Sales      | Henry    |  80000 |
++------------+----------+--------+

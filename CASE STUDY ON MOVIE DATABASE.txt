@@ -1,0 +1,179 @@
+Case Study: Movie Database Simplification
+Background:
+FlickHub is a small movie rental business that maintains a simple database to track its
+movie inventory, customers, and rental transactions. The company wants to improve its
+database structure for better management and reporting of movie-related information.
+
+Current Database Structure:
+Movies table: MovieID, Title, Genre, ReleaseDate, Stock
+Customers table: CustomerID, FirstName, LastName, Email, Phone
+Rentals table: RentalID, CustomerID, MovieID, RentalDate, ReturnDate
+
+ANSWER:
+ create table rental(rental_id int primary key auto_increment,
+    -> movie_id int,customer_id int,rental_date date, exp_return_date date,return_date date,
+    -> late_fees  float, foreign key(customer_id) references customer(customer_id),
+    -> foreign key(movie_id) references movie(movie_id));
+
+ desc rental;
+
++-----------------+---------+------+-----+---------+----------------+
+| Field           | Type    | Null | Key | Default | Extra          |
++-----------------+---------+------+-----+---------+----------------+
+| rental_id       | int(11) | NO   | PRI | NULL    | auto_increment |
+| movie_id        | int(11) | YES  | MUL | NULL    |                |
+| customer_id     | int(11) | YES  | MUL | NULL    |                |
+| rental_date     | date    | YES  |     | NULL    |                |
+| exp_return_date | date    | YES  |     | NULL    |                |
+| return_date     | date    | YES  |     | NULL    |                |
+| late_fees       | float   | YES  |     | NULL    |                |
++-----------------+---------+------+-----+---------+----------------+
+
+create table movie(movie_id int primary key,
+    -> title varchar(50),genre int, stock int,release_date date);
+
+
+ desc movie;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| movie_id     | int(11)     | NO   | PRI | NULL    |       |
+| title        | varchar(50) | YES  |     | NULL    |       |
+| genre        | int(11)     | YES  |     | NULL    |       |
+| stock        | int(11)     | YES  |     | NULL    |       |
+| release_date | date        | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+
+
+create table customer(customer_id int primary key auto_increment,
+    -> first_name varchar(30),last_name varchar(30),email varchar(30),phone bigint);
+
+ desc customer;
++-------------+-------------+------+-----+---------+----------------+
+| Field       | Type        | Null | Key | Default | Extra          |
++-------------+-------------+------+-----+---------+----------------+
+| customer_id | int(11)     | NO   | PRI | NULL    | auto_increment |
+| first_name  | varchar(30) | YES  |     | NULL    |                |
+| last_name   | varchar(30) | YES  |     | NULL    |                |
+| email       | varchar(30) | YES  |     | NULL    |                |
+| phone       | bigint(20)  | YES  |     | NULL    |                |
++-------------+-------------+------+-----+---------+----------------+
+
+
+Tasks:
+Modify the Movies table to include a column for &quot;AvailableStock&quot; to easily track
+the number of available copies for each movie.
+Expand the Customers table to include additional customer information such as
+address and membership status.
+Create a calculated column in the Rentals table to automatically compute the
+rental duration and another column for late fees.
+
+ANSWER:
+
+alter table movie
+    -> add available_stock int after stock;
+
+
+desc movie;
++-----------------+-------------+------+-----+---------+-------+
+| Field           | Type        | Null | Key | Default | Extra |
++-----------------+-------------+------+-----+---------+-------+
+| movie_id        | int(11)     | NO   | PRI | NULL    |       |
+| title           | varchar(50) | YES  |     | NULL    |       |
+| genre           | varchar(30) | YES  |     | NULL    |       |
+| stock           | int(11)     | YES  |     | NULL    |       |
+| available_stock | int(11)     | YES  |     | NULL    |       |
+| release_date    | date        | YES  |     | NULL    |       |
++-----------------+-------------+------+-----+---------+-------+
+
+ alter table customer
+    -> add address varchar(50);
+alter table customer
+    -> add membership_status varchar(50);
+
+ desc customer;
++-------------------+-------------+------+-----+---------+----------------+
+| Field             | Type        | Null | Key | Default | Extra          |
++-------------------+-------------+------+-----+---------+----------------+
+| customer_id       | int(11)     | NO   | PRI | NULL    | auto_increment |
+| first_name        | varchar(30) | YES  |     | NULL    |                |
+| last_name         | varchar(30) | YES  |     | NULL    |                |
+| email             | varchar(30) | YES  |     | NULL    |                |
+| phone             | bigint(20)  | YES  |     | NULL    |                |
+| address           | varchar(50) | YES  |     | NULL    |                |
+| membership_status | varchar(50) | YES  |     | NULL    |                |
++-------------------+-------------+------+-----+---------+----------------+
+
+
+alter table rental
+    -> add rental_duration int;
+ desc rental;
++-----------------+---------+------+-----+---------+----------------+
+| Field           | Type    | Null | Key | Default | Extra          |
++-----------------+---------+------+-----+---------+----------------+
+| rental_id       | int(11) | NO   | PRI | NULL    | auto_increment |
+| movie_id        | int(11) | YES  | MUL | NULL    |                |
+| customer_id     | int(11) | YES  | MUL | NULL    |                |
+| rental_date     | date    | YES  |     | NULL    |                |
+| exp_return_date | date    | YES  |     | NULL    |                |
+| return_date     | date    | YES  |     | NULL    |                |
+| late_fees       | float   | YES  |     | NULL    |                |
+| rental_duration | int(11) | YES  |     | NULL    |                |
++-----------------+---------+------+-----+---------+----------------+
+
+
+After inserting data into tables:
+1) movie table
++----------+---------------------+------------------+-------+-----------------+--------------+
+| movie_id | title               | genre            | stock | available_stock | release_date |
++----------+---------------------+------------------+-------+-----------------+--------------+
+|      111 | The-Secret          | secret of life   |    10 |               5 | 2023-12-09   |
+|      112 | the barmdua tringle | secret of occean |    10 |               4 | 2011-09-12   |
+|      113 | classmates          | collage life     |    30 |              12 | 2014-12-02   |
++----------+---------------------+------------------+-------+-----------------+--------------+
+
+2) customer table
++-------------+------------+-----------+------------------+------------+---------+-------------------+
+| customer_id | first_name | last_name | email            | phone      | address | membership_status |
++-------------+------------+-----------+------------------+------------+---------+-------------------+
+|           1 | harry      | anthney   | aaa@gmail.com    | 9087568923 | pune    | active            |
+|           2 | mac        | disuzza   | mac@gmail.com    | 9879065439 | daund   | active            |
+|           3 | milan      | bachav    | milan@gmail.com  | 9087193409 | mumbai  | active            |
+|           4 | sujata     | phunde    | sujata@gmail.com | 9012546810 | pune    | active            |
++-------------+------------+-----------+------------------+------------+---------+-------------------+
+logic:
+	calculating rental duration:
+ 	rental_duration=datediff(exp_return_date,rental_date)
+
+Query: update rental set rental_duration=datediff(exp_return_date,rental_date) where condition;
+
+logic:
+	calculating late fees:
+	
+	late_fees=datediff(return_date,exp_return_date)*10
+
+	        eg.(2024-05-10)<=(2024-05-10)=true then 0
+		   (2024-05-11)-(2024-05-10)=1*10=10
+		   (2024-05-08)-(2024-05-04)=4*10=40
+		   (2024-05-02)-(2024-05-01)=1*10=10
+		   (2024-05-13)-(2024-05-11)=2*10=20
+		   (2024-04-30)-(2024-04-20)=10*10=100
+
+ update rental set late_fees=case
+    -> when return_date <= exp_return_date then 0
+    -> else datediff(return_date,exp_return_date)*10        -- assume 10rs per day late fee
+    -> end where condition;
+
+select * from rental;
++-----------+----------+-------------+-------------+-----------------+-------------+-----------+-----------------+
+| rental_id | movie_id | customer_id | rental_date | exp_return_date | return_date | late_fees | rental_duration |
++-----------+----------+-------------+-------------+-----------------+-------------+-----------+-----------------+
+|         1 |      111 |           1 | 2024-05-09  | 2024-05-10      | 2024-05-10  |         0 |               1 |
+|         2 |      112 |           2 | 2024-05-02  | 2024-05-10      | 2024-05-11  |        10 |               7 |
+|         3 |      111 |           2 | 2024-05-01  | 2024-05-04      | 2024-05-08  |        40 |               3 |
+|         4 |      112 |           1 | 2024-04-30  | 2024-05-01      | 2024-05-02  |        10 |               1 |
+|         5 |      111 |           3 | 2024-05-10  | 2024-05-11      | 2024-05-13  |        20 |               1 |
+|         6 |      113 |           3 | 2024-04-12  | 2024-04-20      | 2024-04-30  |       100 |               8 |
++-----------+----------+-------------+-------------+-----------------+-------------+-----------+-----------------+
+
+ 
